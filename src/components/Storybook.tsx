@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
@@ -14,6 +13,17 @@ interface StorybookProps {
 const Storybook = ({ story }: StorybookProps) => {
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [isAutoplayOn, setIsAutoplayOn] = useState(false);
+
+  // Add this check to prevent errors if pages are missing
+  if (!story.pages || story.pages.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full text-center">
+        <h2 className="text-2xl font-bold mb-4">Oops! This story has no pages.</h2>
+        <p className="text-muted-foreground">It might not have been generated properly. Try creating a new story.</p>
+      </div>
+    );
+  }
+
   const currentPage = story.pages[currentPageIndex];
 
   const goToNextPage = () => {
@@ -46,18 +56,18 @@ const Storybook = ({ story }: StorybookProps) => {
           <ArrowLeft className="mr-2 h-5 w-5" /> Previous
         </Button>
         <div className="flex flex-col items-center gap-2">
-            <div className="text-lg font-bold">
-              Page {currentPage.pageNumber} / {story.pages.length}
-            </div>
-             <div className="flex items-center space-x-2">
-              <Switch
-                id="autoplay-switch"
-                checked={isAutoplayOn}
-                onCheckedChange={setIsAutoplayOn}
-                disabled={currentPageIndex === story.pages.length - 1 && !isAutoplayOn}
-              />
-              <Label htmlFor="autoplay-switch">Autoplay</Label>
-            </div>
+          <div className="text-lg font-bold">
+            Page {currentPage.pageNumber} / {story.pages.length}
+          </div>
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="autoplay-switch"
+              checked={isAutoplayOn}
+              onCheckedChange={setIsAutoplayOn}
+              disabled={currentPageIndex === story.pages.length - 1 && !isAutoplayOn}
+            />
+            <Label htmlFor="autoplay-switch">Autoplay</Label>
+          </div>
         </div>
         <Button onClick={goToNextPage} disabled={currentPageIndex === story.pages.length - 1} size="lg">
           Next <ArrowRight className="ml-2 h-5 w-5" />
